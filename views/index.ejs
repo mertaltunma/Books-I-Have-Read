@@ -1,0 +1,68 @@
+<%- include('partials/header.ejs'); -%>
+
+<div class="px-4 pt-5 my-5 text-center">
+    <h1 class="display-1 fw-bold text-body-emphasis">Mert Altun</h1>
+    <h2 class="display-2 fw-bold text-body-emphasis">Books I Have Read</h2>
+
+    <form action="/" method="get">
+        <input type="radio" name="sort" id="sortTitle" value="title">
+        <label class="lead" for="sortTitle">Sort by Title (A to Z)</label><br>
+        <input type="radio" name="sort" id="sortRating" value="rating">
+        <label class="lead" for="sortRating">Sort by Rating (Highest to Lowest)</label><br>
+        <button type="submit" class="btn btn-dark">Click to Sort the Books</button>
+    </form>
+</div>
+<hr>
+
+<!--Creates new div for each book to represent the relevant info of each book.-->
+<% for(let book of books){ %>
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <a href=<%=book.amazon_link%>><img src=<%=book.book_cover%> alt="cover" class="image d-block mx-lg-auto img-fluid" width="245" height="175" loading="lazy"></a>
+      </div>
+      <div class="col-lg-6">
+        <h1 class="display-6 fw-bold text-body-emphasis lh-1 mb-3"><%=book.title%> By <%=book.author%></h1>
+        <p class="lead">Date Read (DD/MM/YYYY): <%=book.date_read%></p>
+        <p class="lead">Rating (out of 5): <%=book.rating%></p>
+        <p class="lead">ISBN: <%=book.isbn%></p>
+        <a href=<%=book.amazon_link%>>Click for the Amazon page of the book</a><br><br>
+        <form action="/delete" method="post">
+            <button name="deleteBookId" value="<%= book.id %>" class="btn btn-danger btn-lg px-4">Delete Book</button> 
+        </form>
+      </div>
+    </div>
+    <h2 class="display-6 fw-bold text-body-emphasis lh-1 mb-3">My Notes</h2>
+    <p class="lead" id="notes<%=book.id%>"><%=book.notes%></p>
+    <form action="/edit" method="post">
+        <input type="hidden" name="editBookId" value="<%=book.id%>">
+        <div class="input-group">
+            <textarea name="notes" id="input<%=book.id%>" value="<%=book.notes%>" hidden="true" class="form-control" aria-label="With textarea" rows="5"><%=book.notes%></textarea>
+        </div>
+        <button class="btn btn-primary btn-lg px-4" id="save<%=book.id%>" type="submit" hidden>SAVE</button>
+    </form>
+    <button class="btn btn-primary btn-lg px-4 me-md-2" id="edit<%=book.id%>" onclick="handler('<%=book.id%>')">Edit Notes</button>
+</div>
+<hr><hr>
+<% } %>
+
+<form action="/addbook" method="post">
+    <div class="d-grid gap-2">
+        <button name="add" value="new" class="btn btn-success">Add New Book</button>
+    </div>
+</form>
+
+<!-- When the button named "EDIT NOTES" is clicked the paragraph that consists notes and the clicked button are being disappeared
+and the button named "SAVE" and text area are being appeared. After user makes the changes on notes and clickes the button named
+"SAVE", "SAVE" button and text area are being disappeared and "EDIT NOTES" button and the paragraph consisting of notes are
+being appeared. -->
+
+<script>
+    function handler(id) {
+      document.getElementById("notes" + id).setAttribute("hidden", true)
+      document.getElementById("edit" + id).setAttribute("hidden", true)
+      document.getElementById("save" + id).removeAttribute("hidden")
+      document.getElementById("input" + id).removeAttribute("hidden")
+    }
+</script>
+<%- include('partials/footer.ejs'); -%>
